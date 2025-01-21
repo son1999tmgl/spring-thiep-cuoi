@@ -2,10 +2,11 @@ package wedding.invitation.configuration;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.LocaleResolver;
 
@@ -13,15 +14,17 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
+
+@Component
 @Configuration
-public class i18nConfig implements LocaleResolver
+public class I18nConfig implements LocaleResolver
 {
-    private static final List<Locale> SUPPORTED_LOCALES = Arrays.asList(
+    private final List<Locale> SUPPORTED_LOCALES = Arrays.asList(
             Locale.ENGLISH,
-            new Locale("vi"), // Tiếng Việt
-            Locale.FRENCH     // Tiếng Pháp
+            new Locale("vi"),
+            Locale.FRENCH
     );
-    private static final Locale DEFAULT_LOCALE = new Locale("vi");
+    private final Locale DEFAULT_LOCALE = new Locale("vi");
     @Override
     public Locale resolveLocale(HttpServletRequest request) {
         String acceptLanguage = request.getHeader("Accept-Language");
@@ -40,16 +43,12 @@ public class i18nConfig implements LocaleResolver
     public void setLocale(HttpServletRequest request, HttpServletResponse response, Locale locale) {
 
     }
-    @Bean
-    public LocaleResolver localeResolver() {
-        return new i18nConfig();
-    }
 
-    @Bean
-    public MessageSource messageSource(String code) {
+    public String messageSource(String code) {
+        Locale locale = LocaleContextHolder.getLocale();
         ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
         messageSource.setBasename("classpath:i18n/messages");
         messageSource.setDefaultEncoding("UTF-8");
-        return messageSource;
+        return messageSource.getMessage(code, null, locale);
     }
 }
