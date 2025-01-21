@@ -1,14 +1,14 @@
 package wedding.invitation.controller;
 
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import wedding.invitation.configuration.I18nConfig;
+import wedding.invitation.dto.request.UserRequetDTO;
+import wedding.invitation.dto.response.ResponseData;
 
 import java.util.Locale;
 
@@ -23,5 +23,10 @@ public class UserController {
     @GetMapping("/")
     public String getUser(Locale locale){
         return i18nConfig.messageSource("welcome.message");
+    }
+
+    @PostMapping("/login")
+    public ResponseData<?> login(@Valid @RequestBody UserRequetDTO user){
+        return new ResponseData<>(200, i18nConfig.messageSource("user.login.success"));
     }
 }
